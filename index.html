@@ -1,6 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+########################
+    <title>My Amplify App</title>
+    <!-- Include Pinpoint SDK -->
+    <script src="https://pinpoint.us-east-1.amazonaws.com/pinpoint.js"></script>
+    <script>
+        // Initialize Pinpoint SDK with your Pinpoint project ID
+        var pinpoint = new Pinpoint();
+        var pinpointAppId = 'd3qtan6xlvo2vh';
+        var endpointId;
+
+        // Register for push notifications
+        function registerForPushNotifications() {
+            var messaging = firebase.messaging();
+            messaging.requestPermission().then(function () {
+                console.log('Notification permission granted.');
+                return messaging.getToken();
+            }).then(function (token) {
+                console.log('Token:', token);
+                // Save the token to your Pinpoint project
+                pinpoint.addUserEndpoints(pinpointAppId, token, endpointCallback);
+            }).catch(function (err) {
+                console.log('Unable to get permission to notify.', err);
+            });
+        }
+
+        // Callback function for endpoint registration
+        function endpointCallback(err, data) {
+            if (err) console.log(err, err.stack);
+            else {
+                console.log('Successfully registered endpoint:', data);
+                endpointId = data.EndpointResponse.EndpointId;
+            }
+        }
+
+        // Handle incoming push notifications
+        function onPushNotification(payload) {
+            console.log('Received push notification:', payload);
+            // Process and display the notification in your app
+        }
+
+        // Add event listener for push notifications
+        document.addEventListener('onPushNotification', function (event) {
+            onPushNotification(event.detail);
+        });
+
+        // Register for push notifications when the page loads
+        window.onload = registerForPushNotifications;
+    </script>
+</head>
+<body>
+    <h1>Welcome to My Amplify App</h1>
+    <!-- Your app content here -->
+
+  #########################
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tic Tac Toe</title>
